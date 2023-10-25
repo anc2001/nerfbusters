@@ -26,7 +26,6 @@ from torch.utils.data import IterableDataset
 
 from nerfstudio.cameras.rays import Frustums, RaySamples
 from nerfstudio.field_components.field_heads import FieldHeadNames
-from nerfstudio.utils.eval_utils import eval_setup
 
 
 def as_mesh(scene_or_mesh):
@@ -69,7 +68,7 @@ class NerfstudioDataset(IterableDataset):
 
     def __init__(
         self,
-        load_config: Path,
+        pipeline,
         num_crops: int = 100,
         max_crop_size=0.5,
         min_crop_size=0.4,
@@ -78,7 +77,6 @@ class NerfstudioDataset(IterableDataset):
     ) -> None:
         super().__init__()
 
-        self.load_config = load_config
         self.num_crops = num_crops
         self.max_crop_size = max_crop_size
         self.min_crop_size = min_crop_size
@@ -87,8 +85,7 @@ class NerfstudioDataset(IterableDataset):
 
         self.count = 0
 
-        # load the pipeline
-        _, self.pipeline, _ = eval_setup(Path(self.load_config))
+        self.pipeline = pipeline
 
         scene_box = self.pipeline.datamanager.train_dataparser_outputs.scene_box
         self.min_coord = scene_box.aabb[0]
