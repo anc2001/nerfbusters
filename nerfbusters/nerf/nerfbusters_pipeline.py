@@ -599,16 +599,17 @@ class NerfbustersPipeline(VanillaPipeline):
                             self.weight_grid.update(normalized_positions, quant)
                         else:
                             raise ValueError(f"Unknown weight grid quantity: {self.config.weight_grid_quantity}")
-
-        camera_opt_param_group = self.config.datamanager.camera_optimizer.param_group
-        if camera_opt_param_group in self.datamanager.get_param_groups():
-            # Report the camera optimization metrics
-            metrics_dict["camera_opt_translation"] = (
-                self.datamanager.get_param_groups()[camera_opt_param_group][0].data[:, :3].norm()
-            )
-            metrics_dict["camera_opt_rotation"] = (
-                self.datamanager.get_param_groups()[camera_opt_param_group][0].data[:, 3:].norm()
-            )
+        
+        if self.model.camera_optimizer.mode != "off":
+            camera_opt_param_group = self.config.datamanager.camera_optimizer.param_group
+            if camera_opt_param_group in self.datamanager.get_param_groups():
+                # Report the camera optimization metrics
+                metrics_dict["camera_opt_translation"] = (
+                    self.datamanager.get_param_groups()[camera_opt_param_group][0].data[:, :3].norm()
+                )
+                metrics_dict["camera_opt_rotation"] = (
+                    self.datamanager.get_param_groups()[camera_opt_param_group][0].data[:, 3:].norm()
+                )
 
         # the loss dict
         loss_dict = self.model.get_loss_dict(model_outputs, batch, metrics_dict)
