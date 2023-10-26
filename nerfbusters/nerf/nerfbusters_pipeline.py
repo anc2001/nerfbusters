@@ -298,6 +298,7 @@ class NerfbustersPipeline(VanillaPipeline):
         test_mode: Literal["test", "val", "inference"] = "val",
         world_size: int = 1,
         local_rank: int = 0,
+        grad_scaler = None,
     ):
         super().__init__(config, device, test_mode, world_size, local_rank)
 
