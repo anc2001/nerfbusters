@@ -600,8 +600,9 @@ class NerfbustersPipeline(VanillaPipeline):
                         else:
                             raise ValueError(f"Unknown weight grid quantity: {self.config.weight_grid_quantity}")
         
-        if self.model.camera_optimizer.mode != "off":
-            camera_opt_param_group = self.config.datamanager.camera_optimizer.param_group
+        # TODO fix this 
+        if self.model.camera_optimizer.config.mode != "off":
+            camera_opt_param_group = self.model.camera_optimizer.param_group
             if camera_opt_param_group in self.datamanager.get_param_groups():
                 # Report the camera optimization metrics
                 metrics_dict["camera_opt_translation"] = (
