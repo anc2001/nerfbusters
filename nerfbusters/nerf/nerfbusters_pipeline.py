@@ -39,7 +39,7 @@ from nerfstudio.engine.callbacks import (
     TrainingCallbackAttributes,
     TrainingCallbackLocation,
 )
-from nerfstudio.fields.visibility_field import VisibilityField
+from wriva.scenicnerf.visibility_field import VisibilityField
 from nerfstudio.pipelines.base_pipeline import VanillaPipeline, VanillaPipelineConfig
 from nerfstudio.utils import profiler, writer
 
