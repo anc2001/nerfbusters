@@ -43,6 +43,8 @@ from wriva.scenicnerf.visibility_field import VisibilityField
 from nerfstudio.pipelines.base_pipeline import VanillaPipeline, VanillaPipelineConfig
 from nerfstudio.utils import profiler, writer
 
+from terra import settings
+
 print_stats = lambda x: print(f"x mean {x.mean():.3f}, std {x.std():.3f}, min {x.min():.3f}, max {x.max():.3f}")
 
 
@@ -998,14 +1000,16 @@ class NerfbustersPipeline(VanillaPipeline):
                     "max_point": [float(v) for v in self.cube_end_xyz[idx].flatten()],
                 }
                 training_callback_attributes.viewer_state.vis[f"sceneState/cubes/{idx:06d}"].write(json_)
-
-        # if the visualizer is enabled
-        if training_callback_attributes.viewer_state:
-            callbacks.append(
-                TrainingCallback(
-                    where_to_run=[TrainingCallbackLocation.BEFORE_TRAIN_ITERATION],
-                    update_every_num_iters=self.config.steps_per_draw_cubes,
-                    func=draw_cubes,
+        
+        # If new viewer is available 
+        if settings.use_nerfbusters_viewer:
+            # if the visualizer is enabled
+            if training_callback_attributes.viewer_state:
+                callbacks.append(
+                    TrainingCallback(
+                        where_to_run=[TrainingCallbackLocation.BEFORE_TRAIN_ITERATION],
+                        update_every_num_iters=self.config.steps_per_draw_cubes,
+                        func=draw_cubes,
+                    )
                 )
-            )
         return callbacks
