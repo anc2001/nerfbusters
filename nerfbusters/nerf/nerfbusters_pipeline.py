@@ -979,7 +979,7 @@ class NerfbustersPipeline(VanillaPipeline):
         return model_outputs, loss_dict, metrics_dict
 
     def get_training_callbacks(
-        self, training_callback_attributes: TrainingCallbackAttributes
+        self, training_callback_attributes: TrainingCallbackAttributes, use_nerfbusters_viewer = False
     ) -> List[TrainingCallback]:
         datamanager_callbacks = self.datamanager.get_training_callbacks(training_callback_attributes)
         model_callbacks = self.model.get_training_callbacks(training_callback_attributes)
@@ -999,14 +999,14 @@ class NerfbustersPipeline(VanillaPipeline):
                 }
                 training_callback_attributes.viewer_state.vis[f"sceneState/cubes/{idx:06d}"].write(json_)
         
-        # Set this back once nerfbusters viewer is integrated 
-        # # if the visualizer is enabled
-        # if training_callback_attributes.viewer_state:
-        #     callbacks.append(
-        #         TrainingCallback(
-        #             where_to_run=[TrainingCallbackLocation.BEFORE_TRAIN_ITERATION],
-        #             update_every_num_iters=self.config.steps_per_draw_cubes,
-        #             func=draw_cubes,
-        #         )
-        #     )
+        if use_nerfbusters_viewer:
+            # if the visualizer is enabled
+            if training_callback_attributes.viewer_state:
+                callbacks.append(
+                    TrainingCallback(
+                        where_to_run=[TrainingCallbackLocation.BEFORE_TRAIN_ITERATION],
+                        update_every_num_iters=self.config.steps_per_draw_cubes,
+                        func=draw_cubes,
+                    )
+                )
         return callbacks
